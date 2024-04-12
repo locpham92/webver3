@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 
 public class ConnectToMySQL {
-    static final String URL = "jdbc:mysql://localhost:3306/projectmodule3";
+    static final String URL = "jdbc:mysql://localhost:3306/webver3";
     static final String USERNAME = "root";
     static final String PASSWORD = "12345678";
 

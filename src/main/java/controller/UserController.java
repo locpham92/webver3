@@ -1,10 +1,8 @@
 
 package controller;
 
-import service.OrderDetailService;
-import service.OrderService;
-import service.RoleService;
-import service.UserService;
+import model.Product;
+import service.*;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -14,25 +12,49 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @WebServlet(name = "userController", value = "/products")
 public class UserController extends HttpServlet {
-    private UserService userService = new UserService();
-    private RoleService roleService = new RoleService();
+    private ProductService productService = new ProductService();
     public OrderService orderService = new OrderService();
     public OrderDetailService orderDetailService = new OrderDetailService();
+    List<Integer> choices = new ArrayList<>();
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String action = req.getParameter("action");
         switch (action) {
-            case "login":
-                showLoginForm(req, resp);
+            case "home":
+                showHomePage(req, resp);
                 break;
+            case "search"  :
+                showSearchPage(req, resp);
+                break;
+            case "choose":
+                addchoose(req, resp);
+                break;
+
         }
     }
-    private void showLoginForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private void addchoose(HttpServletRequest req, HttpServletResponse resp) throws IOException,ServletException {
+        int choose = Integer.parseInt(req.getParameter("idChoose"));
+        choices.add(choose);
+        RequestDispatcher dispatcher = req.getRequestDispatcher("product/search.jsp");
+        dispatcher.forward(req, resp);
+    }
+    private void showAddPage(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    }
 
-        RequestDispatcher dispatcher = req.getRequestDispatcher("Users/Login/login.jsp");
+    private void showSearchPage(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        RequestDispatcher dispatcher = req.getRequestDispatcher("product/search.jsp");
+        dispatcher.forward(req, resp);
+    }
+
+    private void showHomePage(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        List<Product> productList = productService.viewAll();
+        req.setAttribute("productList", productList);
+        RequestDispatcher dispatcher = req.getRequestDispatcher("product/home.jsp");
         dispatcher.forward(req, resp);
     }
 
@@ -40,29 +62,33 @@ public class UserController extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String action = req.getParameter("action");
         switch (action) {
-            case "login":
-                login(req, resp);
+            case "search":
+                search(req, resp);
                 break;
-
+            case "total":
+                total(req, resp);
+                break;
         }
     }
 
-    private void login(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        String username = req.getParameter("username");
-        String password = req.getParameter("password");
-
-        if(userService.checkUser(username, password)){
-            int id = userService.getIdUser(username, password);
-            HttpSession session = req.getSession();
-            session.setAttribute("idUser", id);
-            if(roleService.findById(id).getName().equals("admin")){
-                resp.sendRedirect("");
-            } else {
-                resp.sendRedirect("/product?action=home");
-            }
-
-        } else {
-            resp.sendRedirect("http://localhost:8080/user?action=login");
+    private void total(HttpServletRequest req, HttpServletResponse resp) throws IOException,ServletException {
+        List<Product> choicesP= new ArrayList<>();
+        for (int i=0; i<=choices.size();i++) {
+            Product productchoices = productService.findById(i);
+            choicesP.add(productchoices);
         }
+        req.setAttribute("listed",choicesP);
+
+        RequestDispatcher dispatcher = req.getRequestDispatcher("product/order.jsp");
+        dispatcher.forward(req, resp);
+    }
+
+
+    private void search(HttpServletRequest req, HttpServletResponse resp) throws IOException,ServletException {
+        String keyword = req.getParameter("keyword");
+        List<Product> products = productService.findByName(keyword);
+        req.setAttribute("products", products);
+        RequestDispatcher dispatcher = req.getRequestDispatcher("product/search.jsp");
+        dispatcher.forward(req, resp);
     }
 }

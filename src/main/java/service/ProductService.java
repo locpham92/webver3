@@ -107,6 +107,28 @@ public class ProductService {
         }
         return product;
     }
-
-
+    public List<Product> findByName(String findName) {
+        String sql = "select product.*, c.name as nameCategory from product join category c on c.id = product.idcategory where product.name like ?;";
+        List<Product> foundProductList = new ArrayList<>();
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, "%" + findName + "%");
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String fullName = rs.getString("name");
+                Double price = rs.getDouble("price");
+                int quantity = rs.getInt("quantity");
+                String image = rs.getString("image");
+                int idCategory = rs.getInt("idCategory");
+                String nameCategory = rs.getString("nameCategory");
+                Category category = new Category(idCategory, nameCategory);
+                Product product = new Product(id,fullName, price, quantity, image, category);
+                foundProductList.add(product);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return foundProductList;
+    }
 }

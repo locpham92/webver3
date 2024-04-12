@@ -14,11 +14,8 @@
 </head>
 <body>
 <div class="header">
-    <a class="btn" href="http://localhost:8080/staff?action=add">Add</a>
-    <form method="post" action="http://localhost:8080/staff?action=search" style="float: right;">
-        <input type="text" name="keyword" placeholder="Search">
-        <button type="submit" class="btn">Search</button>
-    </form>
+    <a class="btn" href="http://localhost:8080/products?action=add">Add</a>
+    <a class="edit" href="http://localhost:8080/products?action=search">Creat Order</a>
 </div>
 </br>
     <table>

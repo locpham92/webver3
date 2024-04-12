@@ -73,11 +73,15 @@ public class UserController extends HttpServlet {
 
     private void total(HttpServletRequest req, HttpServletResponse resp) throws IOException,ServletException {
         List<Product> choicesP= new ArrayList<>();
-        for (int i=0; i<=choices.size();i++) {
-            Product productchoices = productService.findById(i);
+        for (int i=0; i<choices.size();i++) {
+            Product productchoices = productService.findById(choices.get(i));
             choicesP.add(productchoices);
         }
+        for (Product choice : choicesP) {
+            System.out.println(choice.getName());
+        }
         req.setAttribute("listed",choicesP);
+        choices=null;
 
         RequestDispatcher dispatcher = req.getRequestDispatcher("product/order.jsp");
         dispatcher.forward(req, resp);

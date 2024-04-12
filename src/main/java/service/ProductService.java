@@ -87,7 +87,7 @@ public class ProductService {
 
     public Product findById(int id) {
         String sql = "select product.*, c.name as nameCategory from product join category c on c.id = product.IDCATEGORY where product.id=?;";
-        Product product = null;
+        Product productFound = null;
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, id);
@@ -100,12 +100,12 @@ public class ProductService {
                 int idCategory = rs.getInt("idcategory");
                 String nameCategory = rs.getString("nameCategory");
                 Category category = new Category(idCategory, nameCategory);
-                product = new Product(id, name, price, quantity, image, category);
+                productFound = new Product(id, name, price, quantity, image, category);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return product;
+        return productFound;
     }
     public List<Product> findByName(String findName) {
         String sql = "select product.*, c.name as nameCategory from product join category c on c.id = product.idcategory where product.name like ?;";

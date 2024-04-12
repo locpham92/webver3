@@ -11,7 +11,7 @@
     <title>ORDER</title>
 </head>
 <body>
-<table>
+<table border="1">
     <tr style="font-weight: bold">
         <td>ID</td>
         <td>Name</td>
@@ -27,6 +27,5 @@
         </tr>
     </c:forEach>
 </table>
-<a href="http://localhost:8080/products?action=choose&idChoose=${item.id}">Select</a>
 </body>
 </html>
